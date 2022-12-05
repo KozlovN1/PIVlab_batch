@@ -8,6 +8,7 @@ PIVlab_batch was used in the experimental research published in Experiments in F
 
 Prerequisites:
 - MATLAB,
+- Image Processing Toolbox,
 - PIVlab v. 2.02.
 
 Installation:
