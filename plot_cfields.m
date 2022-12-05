@@ -2,16 +2,8 @@
 % Version 1.0
 % 2022-10-02
 % Nikolai Kozlov
-% Change log: 
-% -added natural orientation of coloured plot
-% -added border indicating the cell boundaries
-% -список опций, директория экспорта и пр.
-% -added the variable <whereistop> to select the image orientation
-% -suggest creating export directory in the config directory
-% -parameters wizard
-% -parse_boolean_conf
 
-%Проверка и выбор директории для экспорта%
+%Check and select the directory for export%
 if exist('exportdir','var')==1 && ischar(exportdir)
     exportdir=uigetdir(exportdir,'Where to save the figures files?');
 elseif exist('configdir','var')==1 && ischar(configdir)
