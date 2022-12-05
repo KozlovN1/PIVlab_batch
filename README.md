@@ -1,5 +1,11 @@
 PIVlab_batch v. 1.0.
 
+This software was developed to automatically process long series of images of the particle-seeded convection. The idea behind it was to observe the evolution of processes. The program allows to easily obtain the time dependence of such integral characteristics as the maximum and volume-average velocity and streamfunction. The full data on velocity fields is exported in CSV files.
+
+The version 1.0.0 works with PIVlab 2.02.
+
+PIVlab_batch was used in the experimental research published in Experiments in Fluids [Mosheva E., Kozlov N. Study of chemoconvection by PIV at neutralization reaction under normal and modulated gravity // Experiments in Fluids. 2021. Vol. 62. Article 10. – DOI: 10.1007/s00348-020-03097-0].
+
 Prerequisites:
 - MATLAB,
 - PIVlab v. 2.02.
