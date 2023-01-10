@@ -116,7 +116,8 @@ if exist('PSI','var')==1
 
     scrsz = get(0,'ScreenSize');
 
-    fig=figure('Name',strcat(filenames{2*(timestep+round(N2/2)-1)-1},', time: _',num2str(time_s(timestep)),' s'));
+    fig=figure('Name','Streamfunction plot');
+%     fig=figure('Name',strcat(filenames{2*(timestep+round(N2/2)-1)-1},', time: _',num2str(time_s(timestep)),' s'));
     if dispfig==false; set(fig,'Visible','off'); end
     % if bckgdnclr==true; set(fig,'Color','#CACACA'); end
     % set(fig,'Position',[0.1*scrsz(3) 0.1*scrsz(4) 0.5*scrsz(3) 0.75*scrsz(4)]);

@@ -1,5 +1,5 @@
 % Batch processing with PIVlab (originally developed for the experiments on chemoconvection).
-% Version 1.0, 2022-12-04.
+% Version 1.0.1, 2022-12-27.
 % Nikolai Kozlov.
 
 % W. Thielicke says: 
@@ -64,7 +64,7 @@ end
 run(strcat(configdir,configfile));
 
 %% Check the config version
-if PIVconf_ver == "1.5" % "else" & "end" are in the very end
+if strcmp(PIVconf_ver,'1.6') % "else" & "end" are in the very end
     %% Check the directory to export data; by NK
     if  exist('exportdir','var')==1 && ischar(exportdir)
         exportdir=uigetdir(exportdir,'Where to save the data files?');
@@ -94,7 +94,7 @@ if PIVconf_ver == "1.5" % "else" & "end" are in the very end
     
     %% Standard image preprocessing settings (moved to configfile)
     
-    %% PIV analysis loop
+    %% PIV analysis loop; by W. Thielicke
     if mod(amount,2) == 1 %Uneven number of images?
         disp('Image folder should contain an even number of images.')
         %remove last image from list
@@ -108,11 +108,6 @@ if PIVconf_ver == "1.5" % "else" & "end" are in the very end
     v=x;
     typevector=x; %typevector will be 1 for regular vectors, 0 for masked areas
     counter=0;
-    %% rel. dynamic ROI; by NK
-    roiboundary=0; 
-    roiwidth=0; 
-    roiboundary_0=s{5,2}(1); 
-    roiwidth_0=s{5,2}(3);
     %% for visualization; by NK
     scrsz = get(0,'ScreenSize');
     if showfields==true
@@ -125,10 +120,7 @@ if PIVconf_ver == "1.5" % "else" & "end" are in the very end
         counter=counter+1;
         %% dynamic ROI; by NK
         if dynamicroi==true
-                            %!!!!UPD 13/3/21 DON'T MODIFY BELOW: roi_C1, roi_pow are intruduced instead!!!!
-            roiwidth = roiwidth_0 + roi_C1*power(0.01*(counter-1),roi_pow); %% This law is obtained from experiment by measuring front coordinate or window width
-            s{5,2}(3)=round(roiwidth); 
-            s{5,2}(1)=roiboundary_0 - (s{5,2}(3)-roiwidth_0);
+            run(strcat(configdir,'adjustroi')); % v. 1.0.1
         end
         %%
         image1=imread(fullfile(directory, filenames{i})); % read images
@@ -159,7 +151,7 @@ if PIVconf_ver == "1.5" % "else" & "end" are in the very end
         %%}
     end
 
-    %% PIV postprocessing loop
+    %% PIV postprocessing loop; by W. Thielicke
     % Settings (moved to the config file)
 
     u_filt=cell(amount/2,1);
@@ -297,11 +289,9 @@ if PIVconf_ver == "1.5" % "else" & "end" are in the very end
             C3 = 0;
         end
 
-        %%Calculate velocity magnitude without averaging (SWITCH OFF when the DEBUGGING is finished)
+        %%Calculate velocity magnitude without averaging (FOR DEBUGGING)
         if exec_control == true
-            vabs{PIVresult,1}=sqrt(u_filt{PIVresult,1}.^2+v_filt{PIVresult,1}.^2);
-            Vmax1(PIVresult)=max(max(vabs{PIVresult,1},[],1));
-            Vmean1(PIVresult)=mean(mean(vabs{PIVresult,1},1));
+            vel_noavg; % v. 1.0.1
         end
 
         %%Count progress percentage
@@ -312,29 +302,7 @@ if PIVconf_ver == "1.5" % "else" & "end" are in the very end
 
     %% plot the Vmax before averaging (FOR DEBUGGING); by NK
     if exec_control == true
-        % Below: automatically clean what was filmed with wrong timestep
-        for i=1:1:size(Vmax1,1)
-            if badpairs(i) ~= 0
-                if i == 1
-                    for j=2:1:size(Vmax1,1)
-                        if badpairs(j) == 0
-                            Vmax1(i)=Vmax1(j); Vmean1(i)=Vmean1(j);
-                        end
-                    end
-                else
-                    Vmax1(i)=Vmax1(i-1); Vmean1(i)=Vmean1(i-1);
-                end
-            end
-        end
-        figure('Position',[0 0 0.33*scrsz(3) 0.5*scrsz(4)]); 
-        subplot(2,1,1);
-        plot(Vmax1); hold on;
-        ylabel('{\it V}_{max}, pix/frame','fontsize',16, 'rotation',90);% Maximum velocity
-        title('V_{max} before the averaging'); hold off;
-        subplot(2,1,2);
-        plot(Vmean1); hold on;
-        ylabel('{\it V}_{mean}, pix/frame','fontsize',16, 'rotation',90);% Maximum velocity
-        title('V_{mean} before the averaging'); hold off;
+        plot_vel_noavg; % v. 1.0.1
     end
 
     %% Now interpolate NaNs for the averaged values; by NK
@@ -359,19 +327,7 @@ if PIVconf_ver == "1.5" % "else" & "end" are in the very end
     end
     %BELOW: FOR DEBUGGING - plot
     if exec_control == true
-        figure('Position',[0.33*scrsz(3) 0 0.33*scrsz(3) 0.5*scrsz(4)]); 
-        subplot(2,1,1);
-        plot(Vmax); 
-        hold on;
-        ylabel('{\it V}_{max}, pix/frame','fontsize',16, 'rotation',90);% Maximum velocity
-        title('V_{max} after the averaging'); 
-        hold off;
-        subplot(2,1,2);
-        plot(Vmean); 
-        hold on;
-        ylabel('{\it V}_{mean}, pix/frame','fontsize',16, 'rotation',90);% Maximum velocity
-        title('V_{mean} after the averaging'); 
-        hold off;
+        plot_vel_avg; % v. 1.0.1
     end
 
     %% Calculating physical values; by NK
@@ -402,7 +358,7 @@ if PIVconf_ver == "1.5" % "else" & "end" are in the very end
     end
 
     %% Calculate the averaged characteristics, Vmax & Vmean, over a defined time interval dt3; by NK
-    longrunning_average;
+    [Vmax_av, Vmean_av, t_av]=longrunning_average_f(N4, Vmax_sc, Vmean_sc, time_s); % v. 1.0.1
 
     %% Calculate the streamfunction from the averaged velocity fields; by NK
     if computestreamfnc == true
@@ -494,10 +450,10 @@ if PIVconf_ver == "1.5" % "else" & "end" are in the very end
     %%
 
     clearvars -except p s x y u v typevector directory filenames u_filt v_filt typevector_filt ...
-        vabs vabsmean u_filtmean v_filtmean Vmax Vmean time_s badpairs Vmax1 Vmean1 f_f dt1 dt2 N2 N3 N4...
-        clalefact scaleuv t_av Vmax_av Vmean_av amount uvscaled xyscaled x_scaled y_scaled border...
-        x_mean y_mean scalefact scaleuv u_scaled v_scaled Vmax_sc Vmean_sc PSI PSImax PSImin PSIabsmax...
-        vabsscaled configfile configdir exportdir
+        vabs vabsmean u_filtmean v_filtmean Vmax Vmean time_s badpairs Vmax1 Vmean1 f_f dt1 dt2 dt4 ...
+        N2 N3 N4 clalefact scaleuv t_av Vmax_av Vmean_av amount uvscaled xyscaled x_scaled y_scaled ...
+        border x_mean y_mean scalefact scaleuv u_scaled v_scaled Vmax_sc Vmean_sc PSI PSImax PSImin ...
+        PSIabsmax vabsscaled configfile configdir exportdir scrsz
     fclose('all');
     disp('DONE.')
 

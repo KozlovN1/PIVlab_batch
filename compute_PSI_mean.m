@@ -1,3 +1,5 @@
+% v. 1.0.1. 2022-12-27
+
 PSI_mean=zeros(size(PSI,1),1);
 for C1=1:1:size(PSI,1)
     PSI_mean(C1,1)=mean(mean(PSI{C1},1));
@@ -6,7 +8,7 @@ figure('Position',[0.66*scrsz(3) 0.5*scrsz(4) 0.33*scrsz(3) 0.5*scrsz(4)]);
 plot(time_s,PSI_mean');title('\Psi_{mean} (mm^2/s) vs time (s)');
 
 filename = 'PSI_mean.csv';
-if exist(strcat(directory,filesep,'..',filesep,'PSI_mean.csv'),'file') == 2
+if exist(strcat(exportdir,filesep,'..',filesep,'PSI_mean.csv'),'file') == 2
     i = 1;
     while isfile(strcat(directory,filesep,'..',filesep,'PSI_mean_(',num2str(i),').csv')) == 1
         i = i+1;

@@ -1,29 +1,26 @@
 %% Config file for PIVlab_batch
-% v 1.5. 2022-11-23
+% v 1.6. 2022-12-26
 % Do not modify the version number below
-PIVconf_ver = '1.5';
+PIVconf_ver = '1.6';
 
 %% Main batch parameters; by N. Kozlov
-f_f = 25; % frame rate (fps)
-dt1 = 0.250; % time step within a pair (seconds)
+f_f = 10; % frame rate (fps)
+dt1 = 0.100; % time step within a pair (seconds)
 dt2 = 1; % quasi-steady time interval (seconds)
 N2=dt2*f_f;
-% dt3=20; % "skip" interval = between the beginnings
+% dt3=10; % TODO: "skip" interval = between the beginnings
 % N3=dt3*f_f;
-scalefact = 50/337; % scale factor for length (mm/pix)
+scalefact = 50/810; % scale factor for length (mm/pix)
 scaleuv=scalefact/dt1; % scale factor for velocity (mm/(pix*s))
 dt4 = 100; % time interval for averaging, in seconds
 N4=dt4*f_f;
-border = [185 185+591 220 220+337]; % used to export the images: [x x+width y y+height]; normally, it coincides with the cell boundaries; if unsure refer to the region of interest (roi_init)
+border = [206 206+1440 173 173+810]; % used to export the images: [x x+width y y+height]; normally, it coincides with the cell boundaries; if unsure refer to the region of interest (roi_init)
 border=border*scalefact;
-roi_init = [439,220,330,337]; % [x,y,width,height]
+roi_init = [207,172,764,812]; % [x,y,width,height]
 dynamicroi = false;
-if dynamicroi==true
-    roi_C1 = 0;
-    roi_pow = 0;
-end
-intens_min = 0;
-intens_max = 1;
+% if dynamicroi==true see at the end of file
+intens_min = 0.;
+intens_max = 1.;
 usetimestep = false;
 if usetimestep==true
     timestepfile = '';
@@ -76,10 +73,22 @@ p{10,1}='Maximum intensity';     p{10,2}=intens_max;         % Maximum intensity
                         %_%
 
 %% PIV postprocessing settings; by W. Thielicke, moved by N. Kozlov
-umin = -100; % minimum allowed u velocity, adjust to your data
-umax = 100; % maximum allowed u velocity, adjust to your data
-vmin = -100; % minimum allowed v velocity, adjust to your data
-vmax = 100; % maximum allowed v velocity, adjust to your data
+umin = -10; % minimum allowed u velocity, adjust to your data
+umax = 10; % maximum allowed u velocity, adjust to your data
+vmin = -10; % minimum allowed v velocity, adjust to your data
+vmax = 10; % maximum allowed v velocity, adjust to your data
 stdthresh=6; % threshold for standard deviation check
 epsilon=0.15; % epsilon for normalized median test
 thresh=3; % threshold for normalized median test
+
+%% related to dynamic ROI; by NK
+if dynamicroi==true
+    % Write below the initial parameters appropritate to your ROI
+    % transformation with time.
+%     e.g.
+%     roi_C1 = 1.58;
+%     roi_pow = 0.637;
+%     roiboundary=0; 
+%     roiwidth=0;
+%     roiwidth_0=s{5,2}(3);
+end
