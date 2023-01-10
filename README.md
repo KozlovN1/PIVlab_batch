@@ -1,8 +1,8 @@
-PIVlab_batch v. 1.0.
+PIVlab_batch v. 1.0.1.
 
 This software was developed to automatically process long series of images of the particle-seeded convection. The idea behind it was to observe the evolution of processes. The program allows to easily obtain the time dependence of such integral characteristics as the maximum and volume-average velocity and streamfunction. The full data on velocity fields is exported in CSV files.
 
-The version 1.0.0 works with PIVlab 2.02.
+The version 1.0.1 works with PIVlab 2.02.
 
 PIVlab_batch was used in the experimental research published in Experiments in Fluids [Mosheva E., Kozlov N. Study of chemoconvection by PIV at neutralization reaction under normal and modulated gravity // Experiments in Fluids. 2021. Vol. 62. Article 10. – DOI: 10.1007/s00348-020-03097-0].
 
@@ -41,22 +41,26 @@ Main batch parameters
 7) dt4 -- the time interval for averaging: to calculate the running average (seconds);
 8) N4 -- the appropriate number of frames;
 9) border -- coordinates of the border used to render the velocity fields in the format [x x+width y y+height]: if unsure, adjust it to ROI or image limits;
-10) roi_init -- the region of interest of the first pair: if the following parameters are set to zero, roi_init is used for the entire image series; this parameter is used to set "s{5,2}" from section "Standard PIV Settings" by W. Thielicke;
-11) roi_C1 -- the coefficient for the growing ROI (OPTIONAL): this is an extra feature that is hardcoded for the case when ROI is growing with time in the horizontal direction; one should adjust it manually for a different direction;
-12) roi_pow -- the exponent for the growing ROI (OPTIONAL): this is an extra feature that is hardcoded for the case when ROI is growing with time in the horizontal direction; one should adjust it manually for a different direction;
-13) intens_min -- the minimun threshold intensity: sets "p{9,2}" from "Standard image preprocessing settings" by W. Thielicke;
-14) intens_max -- the maximum threshold intensity: sets "p{10,2}" from "Standard image preprocessing settings" by W. Thielicke;
-15) usetimestep -- a logical switch: if true, the program will seek for a timestep file, which contains a table with the descriprion of image pairs;
-16) timestepfile -- the name of the timestep file (OPTIONAL): this feature allows to control the stability of images recording rate; PIVlab_batch reads from it the column entitled 'badpair', which should contain in the order of following of the image pairs the values 0 or 1; the former stands for good pairs where dt1 is respected, the latter -- for bad pairs that deviate from dt1;
+10) roi_init -- the region of interest of the first pair; this parameter is used to set "s{5,2}" from section "Standard PIV Settings" by W. Thielicke;
+11) dynamicroi -- if dynamicroi==true the program will execute a special section at the end of file and try to execute the subprogram "adjustroi", which should be copied under name "adjustroi.m" to the same directorty as the config file "PIVlab_conf*.m";
+12) intens_min -- the minimun threshold intensity: sets "p{9,2}" from "Standard image preprocessing settings" by W. Thielicke;
+13) intens_max -- the maximum threshold intensity: sets "p{10,2}" from "Standard image preprocessing settings" by W. Thielicke;
+14) usetimestep -- a logical switch: if true, the program will seek for a timestep file, which contains a table with the descriprion of image pairs;
+15) timestepfile -- the name of the timestep file (OPTIONAL): this feature allows to control the stability of images recording rate; PIVlab_batch reads from it the column entitled 'badpair', which should contain in the order of following of the image pairs the values 0 or 1; the former stands for good pairs where dt1 is respected, the latter -- for bad pairs that deviate from dt1;
 
 Misc. parameters
-17) showfields -- a logical switch to select whether to show the velocity vector fields during the calculation;
-18) computestreamfnc -- a logical switch: compute or not the stream function from the obtained velocity vector fields;
-19) scanpasses -- number of passes (forth and back): 2 is normal mode, 1 is for debugging;
-20) leftBC, bottomBC, rightBC, topBC -- the boundary conditions for the streamfunction: possible values are scalar, 1D vector of the approrpiate length, NaN;
-21) exec_control -- a logical switch that selects whether or not to have some extra ouput from the program.
+16) showfields -- a logical switch to select whether to show the velocity vector fields during the calculation;
+17) computestreamfnc -- a logical switch: compute or not the stream function from the obtained velocity vector fields;
+18) scanpasses -- number of passes (forth and back): 2 is normal mode, 1 is for debugging;
+19) leftBC, bottomBC, rightBC, topBC -- the boundary conditions for the streamfunction: possible values are scalar, 1D vector of the approrpiate length, NaN;
+20) exec_control -- a logical switch that selects whether or not to have some extra ouput from the program.
 
-Other parameters are the same as in the PIVlab and documented there.
+21) Standard PIV Settings, Standard Image Preprocessing Settings and PIV Postprocessing Settings are the same as in the PIVlab and documented there.
+
+22) Section to provide user-defined initial parameters of the dynamic region of interest (ROI): 
+if dynamicroi==true
+%     Write here any parameters related to you dynamic ROI UDF.
+end
 
 
 _Finding the parameters values
